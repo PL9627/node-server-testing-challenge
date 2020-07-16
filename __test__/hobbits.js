@@ -36,4 +36,12 @@ describe("hobbits integration tests", () => {
     expect(res.body.id).toBe(2);
     expect(res.body.name).toBe("frodo");
   });
+
+  it("GET /hobbits/:id (not found)", async () => {
+    const res = await supertest(server).get("/14");
+
+    expect(statusCode).toBe(404);
+    expect(res.headers["content-type"]).toBe("application/json; charset=utf-8");
+    expect(res.body.message).toBe("Hobbit not found");
+  });
 });

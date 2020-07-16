@@ -44,4 +44,15 @@ describe("hobbits integration tests", () => {
     expect(res.headers["content-type"]).toBe("application/json; charset=utf-8");
     expect(res.body.message).toBe("Hobbit not found");
   });
+
+  it("POST /hobbits", async () => {
+    const res = await (await supertest(server).post("/hobbits")).send({
+      name: "bilbo",
+    });
+
+    expect(statusCode).toBe(201);
+    expect(res.headers["content-type"]).toBe("application/json; charset=utf-8");
+    expect(res.body.id).toBeDefined();
+    expect(res.body.name).toBe("bilbo");
+  });
 });

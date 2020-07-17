@@ -7,7 +7,7 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  await db.seed.destroy();
+  await db.destroy();
 });
 
 describe("hobbits integration tests", () => {
@@ -31,28 +31,50 @@ describe("hobbits integration tests", () => {
   it("GET /hobbits/:id", async () => {
     const res = await supertest(server).get("/hobbits/2");
 
-    expect(statusCode).toBe(200);
+    expect(res.statusCode).toBe(200);
     expect(res.headers["content-type"]).toBe("application/json; charset=utf-8");
     expect(res.body.id).toBe(2);
     expect(res.body.name).toBe("frodo");
   });
 
   it("GET /hobbits/:id (not found)", async () => {
-    const res = await supertest(server).get("/14");
+    const res = await supertest(server).get("/hobbits/14");
 
-    expect(statusCode).toBe(404);
+    expect(res.statusCode).toBe(404);
     expect(res.headers["content-type"]).toBe("application/json; charset=utf-8");
     expect(res.body.message).toBe("Hobbit not found");
   });
 
   it("POST /hobbits", async () => {
-    const res = await (await supertest(server).post("/hobbits")).send({
+    const res = await supertest(server).post("/hobbits").send({
       name: "bilbo",
     });
 
-    expect(statusCode).toBe(201);
+    expect(res.statusCode).toBe(201);
     expect(res.headers["content-type"]).toBe("application/json; charset=utf-8");
     expect(res.body.id).toBeDefined();
     expect(res.body.name).toBe("bilbo");
   });
+
+  it("DELETE /hobbits/:id", async () => {
+    /* const addHobbit = await supertest(server).post("/hobbits").send({
+        name: "bilbo baggins",
+      });
+    
+    const deleteHobbit = await supertest(server).delete(`/hobbits/${ addHobbit.body.id }`);
+
+    expect( deleteHobbit.statusCode ).toBe( 204 )
+    expect( deleteHobbit.body ).toEqual( {} ) */
+    const res = await supertest(server).delete("/hobbits/1")
+
+    expect(res.statusCode).toBe(204)
+  });
+
+  it("DELETE /hobbits/:id (not found)", async () => {
+    const res = await supertest(server).delete("/hobbits/14");
+
+    expect(res.statusCode).toBe(404);
+    expect(res.headers["content-type"]).toBe("application/json; charset=utf-8");
+    expect(res.body.message).toBe("Hobbit not found");
+  })
 });
